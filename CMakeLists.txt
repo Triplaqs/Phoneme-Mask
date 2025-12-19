@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 # Defines the name of this project, and assert that it will use C++
-project("3D Face Generator" C CXX)
+project("Phoneme mask" C CXX)
 
 
 
