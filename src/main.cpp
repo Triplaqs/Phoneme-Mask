@@ -38,6 +38,8 @@ typedef struct {
     double w;
 } Vec4;
 
+
+
 //GESTION INPUTS
 //gestion input clavier : ici, si KEY_ESCAPE préssée
 void processInput(GLFWwindow *window, bool* moveRight, bool* moveLeft, bool* moveUp, bool* moveDown){
@@ -65,6 +67,10 @@ void setTriangleColor(unsigned int shaderProgram, float r, float g, float b, flo
     glUniform4f(colorLoc, r, g, b, a);
 }
 
+void generateFace(){
+    
+}
+
 void setTriangleColorRand(unsigned int shaderProgram) {
     float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -89,7 +95,7 @@ int main(int argc, char* argv[]){
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     
     //Création objet fenêtre
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Fluid Simulation", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Phoneme Mouth", NULL, NULL);
     if (window == NULL){
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -292,16 +298,14 @@ int main(int argc, char* argv[]){
         
         // Accumuler la dilatation et la température
         if(moveUp){    
-            currentScale *= 1.01f;  // Augmenter de 1% par frame
-            heatTriangle(shaderProgram, -0.01f);  // Augmenter la température
+            //future interaction clavier
         }
         if(moveDown){    
-            currentScale *= 0.99f;  // Diminuer de 1% par frame
-            heatTriangle(shaderProgram, 0.01f);  // Diminuer la température
+            //future interaction clavier
         }
         
         // Réinitialiser les uniforms à chaque frame
-        float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
+        /*float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
         float cy = (vertices[1] + vertices[4] + vertices[7]) / 3.0f;
         float cz = (vertices[2] + vertices[5] + vertices[8]) / 3.0f;
         GLint loc_centroid = glGetUniformLocation(shaderProgram, "u_centroid");
@@ -309,7 +313,7 @@ int main(int argc, char* argv[]){
         GLint loc_offset = glGetUniformLocation(shaderProgram, "offset");
         glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
         glUniform1f(loc_scale, currentScale);
-        glUniform4f(loc_offset, 0.0f, 0.0f, 0.0f, 0.0f);
+        glUniform4f(loc_offset, 0.0f, 0.0f, 0.0f, 0.0f);*/
         
         if(moveRight){    
             setTriangleColorRand(shaderProgram);
