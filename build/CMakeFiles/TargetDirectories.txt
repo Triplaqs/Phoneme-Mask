@@ -1,0 +1,4 @@
+/home/triplaqs/Documents/Perso/Code/OpenGL/Phoneme mask/build/CMakeFiles/glad.dir
+/home/triplaqs/Documents/Perso/Code/OpenGL/Phoneme mask/build/CMakeFiles/out.dir
+/home/triplaqs/Documents/Perso/Code/OpenGL/Phoneme mask/build/CMakeFiles/edit_cache.dir
+/home/triplaqs/Documents/Perso/Code/OpenGL/Phoneme mask/build/CMakeFiles/rebuild_cache.dir
