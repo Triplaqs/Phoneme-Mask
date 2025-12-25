@@ -7,7 +7,6 @@ cmake_minimum_required(VERSION 3.14)
 project("Phoneme mask" C CXX)
 
 
-
 # ---- Package imports
 
 # glfw3 should be installed on your system prior to this line for it to work

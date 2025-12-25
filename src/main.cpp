@@ -11,6 +11,10 @@
 #include <random>
 #include <cstdlib>
 #include <ctime>
+//headers
+#include "vertex.h"
+#include "animation.h"
+
 
 // Vertices du triangle (global)
 float vertices[] = {
@@ -24,19 +28,22 @@ float currentScale = 1.0f;
 // État de la température (accumulation)
 float currentHeat = 0.0f;  // -1.0 (bleu froid) à +1.0 (rouge chaud)
 
-
 //GESTION FENETRE
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-//Structure pour manipuler points
-typedef struct {
-    double x;
-    double y;
-    double z;
-    double w;
-} Vec4;
+//Structure pour manipuler les vertices du visage
+typedef struct Point {
+    float x, y, z;
+    float w = 1.0f;
+} Point;
+
+typedef struct Face {
+    std::vector<Point> points; //liste des vertices
+    int nb_pts;    // nombre de vertices
+    int etat = 0; //phoneme actuel
+} Face;
 
 
 
@@ -332,7 +339,7 @@ int main(int argc, char* argv[]){
         glfwPollEvents();
     }
 
-    printf("fenêtre de fluides fermée\n");
+    printf("fenêtre Phoneme Mouth fermée\n");
     glfwTerminate();
     return 0;
 }
