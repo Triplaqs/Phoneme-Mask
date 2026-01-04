@@ -2,4 +2,6 @@
 #define ANIMATION_H
 
 
+float essai(Point p);
+
 #endif

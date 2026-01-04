@@ -34,26 +34,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-//Structure pour manipuler les vertices du visage
-typedef struct Point {
-    float x, y, z;
-    float w = 1.0f;
-} Point;
-
-typedef struct Face {
-    std::vector<Point> points; //liste des vertices
-    int nb_pts;    // nombre de vertices
-    int etat = 0; //phoneme actuel
-} Face;
-
-
-//Structure pour manipuler points
-typedef struct {
-    double x;
-    double y;
-    double z;
-    double w;
-} Vec4;
 
 //GESTION INPUTS
 //gestion input clavier : ici, si KEY_ESCAPE préssée
@@ -289,8 +269,7 @@ int main(int argc, char* argv[]){
     glUniform1f(loc_scale, 1.0f);
 
 
-
-    //render loop (maintient la fenêtre ouverte, une loop = une frame)
+//render loop (maintient la fenêtre ouverte, une loop = une frame)
     //se divise en 4 parties : nettoyage, input, render puis cloture
     while(!glfwWindowShouldClose(window)){
     //P1 : nettoyage
