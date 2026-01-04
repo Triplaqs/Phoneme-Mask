@@ -11,13 +11,11 @@
 #include <random>
 #include <cstdlib>
 #include <ctime>
-<<<<<<< HEAD
+
 //headers
 #include "vertex.h"
 #include "animation.h"
 
-=======
->>>>>>> bd04034 (commit des fichiers sources)
 
 // Vertices du triangle (global)
 float vertices[] = {
@@ -31,16 +29,11 @@ float currentScale = 1.0f;
 // État de la température (accumulation)
 float currentHeat = 0.0f;  // -1.0 (bleu froid) à +1.0 (rouge chaud)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> bd04034 (commit des fichiers sources)
 //GESTION FENETRE
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-<<<<<<< HEAD
 //Structure pour manipuler les vertices du visage
 typedef struct Point {
     float x, y, z;
@@ -54,7 +47,6 @@ typedef struct Face {
 } Face;
 
 
-=======
 //Structure pour manipuler points
 typedef struct {
     double x;
@@ -62,7 +54,6 @@ typedef struct {
     double z;
     double w;
 } Vec4;
->>>>>>> bd04034 (commit des fichiers sources)
 
 //GESTION INPUTS
 //gestion input clavier : ici, si KEY_ESCAPE préssée
@@ -91,13 +82,11 @@ void setTriangleColor(unsigned int shaderProgram, float r, float g, float b, flo
     glUniform4f(colorLoc, r, g, b, a);
 }
 
-<<<<<<< HEAD
 void generateFace(){
     
 }
 
-=======
->>>>>>> bd04034 (commit des fichiers sources)
+
 void setTriangleColorRand(unsigned int shaderProgram) {
     float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -122,11 +111,7 @@ int main(int argc, char* argv[]){
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     
     //Création objet fenêtre
-<<<<<<< HEAD
     GLFWwindow* window = glfwCreateWindow(800, 600, "Phoneme Mouth", NULL, NULL);
-=======
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Fluid Simulation", NULL, NULL);
->>>>>>> bd04034 (commit des fichiers sources)
     if (window == NULL){
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -329,7 +314,7 @@ int main(int argc, char* argv[]){
         
         // Accumuler la dilatation et la température
         if(moveUp){    
-<<<<<<< HEAD
+
             //future interaction clavier
         }
         if(moveDown){    
@@ -338,7 +323,6 @@ int main(int argc, char* argv[]){
         
         // Réinitialiser les uniforms à chaque frame
         /*float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
-=======
             currentScale *= 1.01f;  // Augmenter de 1% par frame
             heatTriangle(shaderProgram, -0.01f);  // Augmenter la température
         }
@@ -349,7 +333,6 @@ int main(int argc, char* argv[]){
         
         // Réinitialiser les uniforms à chaque frame
         float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
->>>>>>> bd04034 (commit des fichiers sources)
         float cy = (vertices[1] + vertices[4] + vertices[7]) / 3.0f;
         float cz = (vertices[2] + vertices[5] + vertices[8]) / 3.0f;
         GLint loc_centroid = glGetUniformLocation(shaderProgram, "u_centroid");
@@ -357,11 +340,8 @@ int main(int argc, char* argv[]){
         GLint loc_offset = glGetUniformLocation(shaderProgram, "offset");
         glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
         glUniform1f(loc_scale, currentScale);
-<<<<<<< HEAD
-        glUniform4f(loc_offset, 0.0f, 0.0f, 0.0f, 0.0f);*/
-=======
-        glUniform4f(loc_offset, 0.0f, 0.0f, 0.0f, 0.0f);
->>>>>>> bd04034 (commit des fichiers sources)
+        glUniform4f(loc_offset, 0.0f, 0.0f, 0.0f, 0.0f); */
+
         
         if(moveRight){    
             setTriangleColorRand(shaderProgram);
@@ -380,11 +360,7 @@ int main(int argc, char* argv[]){
         glfwPollEvents();
     }
 
-<<<<<<< HEAD
     printf("fenêtre Phoneme Mouth fermée\n");
-=======
-    printf("fenêtre de fluides fermée\n");
->>>>>>> bd04034 (commit des fichiers sources)
     glfwTerminate();
     return 0;
 }
