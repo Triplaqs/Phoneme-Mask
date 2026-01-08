@@ -1,1 +1,0 @@
-/usr/bin/clang++ -g CMakeFiles/out.dir/src/main.cpp.o CMakeFiles/out.dir/src/animation.cpp.o -o out  libglad.a /usr/local/lib/libglfw3.a /usr/lib/x86_64-linux-gnu/librt.a -lm -ldl 
