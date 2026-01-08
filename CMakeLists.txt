@@ -30,7 +30,7 @@ add_executable(out
 )
 
 # ---- Include directories (headers)
-target_include_directories(out PUBLIC
+target_include_directories(out PRIVATE
     src
 )
 
