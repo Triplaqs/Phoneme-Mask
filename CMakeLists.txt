@@ -7,7 +7,6 @@ cmake_minimum_required(VERSION 3.14)
 project("Phoneme mask" C CXX)
 
 
-
 # ---- Package imports
 
 # glfw3 should be installed on your system prior to this line for it to work
@@ -22,11 +21,19 @@ add_library(glad STATIC glad/src/glad.c)
 target_include_directories(glad PUBLIC glad/include)
 
 
-
 # ---- Compile your executable
 
 # Create an executable named "out" that will depend on the source file src/main.cpp
-add_executable(out src/main.cpp)
+add_executable(out
+    src/main.cpp
+    src/animation.cpp
+)
+
+# ---- Include directories (headers)
+target_include_directories(out PUBLIC
+    src
+)
+
 
 # Link "glad" and "glfw" to your "out" executable
 target_link_libraries(out glad glfw)

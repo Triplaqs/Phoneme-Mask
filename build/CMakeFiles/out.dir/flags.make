@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/clang++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I"/home/triplaqs/Documents/Perso/Code/OpenGL/Phoneme mask/glad/include"
+CXX_INCLUDES = -I"/home/triplaqs/Documents/Perso/Code/OpenGL/Phoneme mask/src" -I"/home/triplaqs/Documents/Perso/Code/OpenGL/Phoneme mask/glad/include"
 
 CXX_FLAGS = -g
 

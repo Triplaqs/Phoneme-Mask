@@ -11,6 +11,10 @@
 #include <random>
 #include <cstdlib>
 #include <ctime>
+//headers
+#include "vertex.h"
+#include "animation.h"
+
 
 // Vertices du triangle (global)
 float vertices[] = {
@@ -29,15 +33,6 @@ float currentHeat = 0.0f;  // -1.0 (bleu froid) à +1.0 (rouge chaud)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
-
-//Structure pour manipuler points
-typedef struct {
-    double x;
-    double y;
-    double z;
-    double w;
-} Vec4;
-
 
 
 //GESTION INPUTS
@@ -70,6 +65,7 @@ void setTriangleColor(unsigned int shaderProgram, float r, float g, float b, flo
 void generateFace(){
     
 }
+
 
 void setTriangleColorRand(unsigned int shaderProgram) {
     float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -274,7 +270,7 @@ int main(int argc, char* argv[]){
 
 
 
-    //render loop (maintient la fenêtre ouverte, une loop = une frame)
+//render loop (maintient la fenêtre ouverte, une loop = une frame)
     //se divise en 4 parties : nettoyage, input, render puis cloture
     while(!glfwWindowShouldClose(window)){
     //P1 : nettoyage
@@ -306,6 +302,16 @@ int main(int argc, char* argv[]){
         
         // Réinitialiser les uniforms à chaque frame
         /*float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
+            currentScale *= 1.01f;  // Augmenter de 1% par frame
+            heatTriangle(shaderProgram, -0.01f);  // Augmenter la température
+        }
+        if(moveDown){    
+            currentScale *= 0.99f;  // Diminuer de 1% par frame
+            heatTriangle(shaderProgram, 0.01f);  // Diminuer la température
+        }
+        
+        // Réinitialiser les uniforms à chaque frame
+        float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
         float cy = (vertices[1] + vertices[4] + vertices[7]) / 3.0f;
         float cz = (vertices[2] + vertices[5] + vertices[8]) / 3.0f;
         GLint loc_centroid = glGetUniformLocation(shaderProgram, "u_centroid");
@@ -313,7 +319,7 @@ int main(int argc, char* argv[]){
         GLint loc_offset = glGetUniformLocation(shaderProgram, "offset");
         glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
         glUniform1f(loc_scale, currentScale);
-        glUniform4f(loc_offset, 0.0f, 0.0f, 0.0f, 0.0f);*/
+        glUniform4f(loc_offset, 0.0f, 0.0f, 0.0f, 0.0f); */
         
         if(moveRight){    
             setTriangleColorRand(shaderProgram);
@@ -332,7 +338,7 @@ int main(int argc, char* argv[]){
         glfwPollEvents();
     }
 
-    printf("fenêtre de fluides fermée\n");
+    printf("fenêtre Phoneme Mouth fermée\n");
     glfwTerminate();
     return 0;
 }

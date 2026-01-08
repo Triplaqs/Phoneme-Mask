@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/out.dir/src/animation.cpp.o"
+  "CMakeFiles/out.dir/src/animation.cpp.o.d"
   "CMakeFiles/out.dir/src/main.cpp.o"
   "CMakeFiles/out.dir/src/main.cpp.o.d"
   "out"
