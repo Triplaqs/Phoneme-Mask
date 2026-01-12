@@ -16,13 +16,6 @@
 #include "animation.h"
 
 
-// Vertices du triangle (global)
-float vertices[] = {
-    -0.75f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f
-};
-
 // État de la dilatation (accumulation)
 float currentScale = 1.0f;
 // État de la température (accumulation)
@@ -104,6 +97,8 @@ int main(int argc, char* argv[]){
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+    // Permettre de régler gl_PointSize depuis le vertex shader
+    glEnable(GL_PROGRAM_POINT_SIZE);
 
     //position et dimensions de la fenêtre
     glViewport(0, 0, 800, 600);
@@ -123,15 +118,34 @@ int main(int argc, char* argv[]){
     //associe le buffer à la carte graphique 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
+    //ajout du triangle
     //Associe les modifications de buffer à celui qu'on a créé (c'est le buffer de référence)
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //Idem pour le visage
+    glBufferData(GL_ARRAY_BUFFER, sizeof(neutre), neutre, GL_STATIC_DRAW);
+
     //paramètres :
     //GL_STREAM_DRAW : La donnée est fixée une seule fois et peu utilisée par le GPU
     //GL_STATIC_DRAW : La donnée est fixée une seule fois et utilisée plusieurs fois
     //GL_DYNAMIC_DRAW : la donnée est changée et utilisée plusieurs fois
+
+    //On remplace 
     
 //DEF DES SHADERS
     //Def de Shader (basique) à travers un C String
+    const char *faceShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "uniform vec4 u_centroid;\n" // centre autour duquel on scale
+    "uniform float u_scale;  \n" // 1.05 ou 0.95
+    "uniform vec4 offset; \n"    
+    "void main()\n"
+    "{\n"
+    "vec4 centered = vec4(aPos, 1.0) - u_centroid;\n"
+    "vec4 scaled = u_centroid + u_scale * centered;\n"
+    "gl_Position = scaled + offset;\n"
+    "gl_PointSize = 6.0; \n"
+    "}\0";
+    
     const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "uniform vec4 u_centroid;\n" // centre autour duquel on scale
@@ -154,15 +168,21 @@ int main(int argc, char* argv[]){
     "}\0";
 
     //création objet Shader
+    unsigned int faceShader;
+    faceShader = glCreateShader(GL_VERTEX_SHADER); // -> type de shader
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER); // -> type de shader
     unsigned int vertexShaderGrid;
     vertexShaderGrid = glCreateShader(GL_VERTEX_SHADER);
 
+    
+
     //Association de l'objet et de notre shader
+    glShaderSource(faceShader, 1, &faceShaderSource, NULL);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glShaderSource(vertexShaderGrid, 1, &vertexShaderSourceGrid, NULL);
     //compilation
+    glCompileShader(faceShader);
     glCompileShader(vertexShader);
     glCompileShader(vertexShaderGrid);
 
@@ -185,8 +205,11 @@ int main(int argc, char* argv[]){
     " FragColor = color;\n"
     "}\0";
 
+//HEY REPRENDS LA FINIS DE SET LES FRAGMENTS SHADERS !!
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 //création objet Shader
+    unsigned int fragmentShaderFace;
     unsigned int fragmentShader;
     unsigned int fragmentShaderGrid;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); // -> type de shader
@@ -226,11 +249,11 @@ int main(int argc, char* argv[]){
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),  (void*)0);
     glEnableVertexAttribArray(0);
 
-    
+//On remplace ici aussi vertices (le triangle) par neutre (le visage)
 //Manipulation d'objet sans structure :
     // 0. copy our vertices array in a buffer for OpenGL to use
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(neutre), neutre, GL_STATIC_DRAW);
     // 1. then set the vertex attributes pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
     (void*)0);
@@ -248,7 +271,12 @@ int main(int argc, char* argv[]){
     glBindVertexArray(VAO);
     // 2. copy our vertices array in a buffer for OpenGL to use
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //avec triangle
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // utiliser neutre (nuage 3D)
+    glBufferData(GL_ARRAY_BUFFER, sizeof(neutre), neutre, GL_STATIC_DRAW);
+ 
     // 3. then set our vertex attributes pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
     (void*)0);
@@ -260,13 +288,40 @@ int main(int argc, char* argv[]){
     //someOpenGLFunctionThatDrawsOurTriangle();
 
     // Initialiser les uniforms du dilate triangle
-    float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
+    /*float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
     float cy = (vertices[1] + vertices[4] + vertices[7]) / 3.0f;
     float cz = (vertices[2] + vertices[5] + vertices[8]) / 3.0f;
     GLint loc_centroid = glGetUniformLocation(shaderProgram, "u_centroid");
     GLint loc_scale = glGetUniformLocation(shaderProgram, "u_scale");
     glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
-    glUniform1f(loc_scale, 1.0f);
+    glUniform1f(loc_scale, 1.0f);*/
+
+    //idem pour le visage
+    // Initialiser les uniforms du modèle à partir de neutre[]
+    int numVerts = (int)((sizeof(neutre) / sizeof(float)) / 3);
+
+    float cx = 0.0f, cy = 0.0f, cz = 0.0f;
+    float minx = 1e9f, miny = 1e9f, minz = 1e9f;
+    float maxx = -1e9f, maxy = -1e9f, maxz = -1e9f;
+    for (int i = 0; i < numVerts; ++i) {
+        float x = neutre[3*i + 0];
+        float y = neutre[3*i + 1];
+        float z = neutre[3*i + 2];
+        cx += x; cy += y; cz += z;
+        minx = std::min(minx, x); miny = std::min(miny, y); minz = std::min(minz, z);
+        maxx = std::max(maxx, x); maxy = std::max(maxy, y); maxz = std::max(maxz, z);
+    }
+    cx /= numVerts; cy /= numVerts; cz /= numVerts;
+    float rangeX = maxx - minx;
+    float rangeY = maxy - miny;
+    float rangeZ = maxz - minz;
+    float maxRange = std::max(rangeX, std::max(rangeY, rangeZ));
+    float fitScale = (maxRange > 0.0f) ? (2.0f / maxRange) : 1.0f; // mappe la plus grande étendue sur [-1,1]
+
+    GLint loc_centroid = glGetUniformLocation(shaderProgram, "u_centroid");
+    GLint loc_scale = glGetUniformLocation(shaderProgram, "u_scale");
+    glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
+    glUniform1f(loc_scale, fitScale * 0.9f); // petit padding
 
 
 
@@ -328,8 +383,10 @@ int main(int argc, char* argv[]){
             currentScale = 1.0f;  // Annuler la dilatation quand on tourne
             makeTriangleSpin(shaderProgram, (float)glfwGetTime());
         }
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        
+        //dessin triangle
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        //dessin visage
+        glDrawArrays(GL_POINTS, 0, numVerts);
         
     //P4 : fin render loop
         //met les pixels en couleur
