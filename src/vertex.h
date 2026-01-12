@@ -26,6 +26,10 @@ typedef struct {
     double w;
 } Vec4;
 
+// Vertices du triangle (global)
+extern float vertices[9];
+
+extern float neutre[762];
 
 
 #endif

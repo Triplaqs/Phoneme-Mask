@@ -1,20 +1,34 @@
 import bpy
+import os
 
-print("script en cours de fonctionnement")
-
+# ---- Récupération de l'objet sélectionné ----
 obj = bpy.context.active_object
 
-#test sur l'objet
 if obj is None:
-    print("ERREUR : Aucun objet sélectionné")
-elif obj.type != 'MESH':
-    print(f"ERREUR : L'objet sélectionné n'est pas un mesh ({obj.type})")
-else:
-    mesh = obj.data
-    bpy.ops.object.mode_set(mode='OBJECT')
+    raise RuntimeError("Aucun objet sélectionné")
+if obj.type != 'MESH':
+    raise RuntimeError("L'objet sélectionné n'est pas un mesh")
 
-    print("float vertices[] = {")
+mesh = obj.data
+bpy.ops.object.mode_set(mode='OBJECT')
+
+# ---- Détermination du dossier de sortie ----
+# 1) dossier du script Python (si sauvegardé)
+script_path = bpy.data.filepath
+script_dir = os.path.dirname(script_path)
+
+# fallback si le .blend n'est pas sauvegardé
+if not script_dir:
+    script_dir = os.path.expanduser("~")
+
+output_path = os.path.join(script_dir, "vertices.txt")
+
+# ---- Écriture du fichier ----
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write("float vertices[] = {\n")
     for v in mesh.vertices:
         x, y, z = v.co
-        print(f"    {x:.6f}f, {y:.6f}f, {z:.6f}f,")
-    print("};")
+        f.write(f"    {x:.6f}f, {y:.6f}f, {z:.6f}f,\n")
+    f.write("};\n")
+
+print(f"Vertices exportés dans : {output_path}")

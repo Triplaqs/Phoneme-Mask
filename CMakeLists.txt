@@ -25,8 +25,9 @@ target_include_directories(glad PUBLIC glad/include)
 
 # Create an executable named "out" that will depend on the source file src/main.cpp
 add_executable(out
-    src/main.cpp
+    src/vertex.cpp
     src/animation.cpp
+    src/main.cpp
 )
 
 # ---- Include directories (headers)
