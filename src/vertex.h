@@ -27,9 +27,10 @@ typedef struct {
 } Vec4;
 
 // Vertices du triangle (global)
-extern float vertices[9];
+//extern float vertices[9];
 
-extern float neutre[762];
+extern float neutre[1248];
+extern unsigned int indices[2136];
 
 
 #endif

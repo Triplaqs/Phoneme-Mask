@@ -11,15 +11,23 @@ mesh.calc_loop_triangles()
 # Chemin du fichier .blend
 blend_path = bpy.data.filepath
 folder = os.path.dirname(blend_path)
+#file_path = "C:\\wsl.localhost\\Ubuntu\\home\\triplaqs\\Documents\\Code\\Phoneme-Mask\\src\\"
+#file_path = "/home/triplaqs/Documents/Code/Phoneme-Mask/src/"
+#file_path = r"\\wsl$\Ubuntu\home\triplaqs\Documents\Code\Phoneme-Mask\src\vertex.cpp"
+file_path = "\\\\wsl$\\Ubuntu\\home\\triplaqs\\Documents\\Code\\Phoneme-Mask\\src\\"
 
-output_path = os.path.join(folder, "mesh_export.txt")
+#abs_path_os = os.path.abspath(folder)  #Pas bon, renvoie sur le dossier Blender
+output_path = os.path.join(file_path, "vertex.cpp")
+#print(f"Chemin absolu du dossier : {abs_path}")
+#print(f"Chemin absolu du dossier (os): {abs_path_os}")
 
 with open(output_path, "w") as f:
+    f.write("#include \"vertex.h\"\n\n\n")
 
     # =====================
     # VERTICES
     # =====================
-    f.write("float vertices[] = {\n")
+    f.write("float neutre[] = {\n")
     for v in mesh.vertices:
         f.write(f"    {v.co.x:.6f}f, {v.co.y:.6f}f, {v.co.z:.6f}f,\n")
     f.write("};\n\n")
