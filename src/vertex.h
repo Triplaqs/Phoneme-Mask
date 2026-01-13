@@ -29,8 +29,8 @@ typedef struct {
 // Vertices du triangle (global)
 //extern float vertices[9];
 
-extern float neutre[1248];
-extern unsigned int indices[2136];
+extern float neutre[2400];
+extern unsigned int indices[4272];
 
 
 #endif

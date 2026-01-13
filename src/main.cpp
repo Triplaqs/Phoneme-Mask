@@ -230,6 +230,7 @@ int main(int argc, char* argv[]){
     "out vec4 FragColor;\n"
     "in vec3 Normal;\n"
     "in vec3 FragPos;\n"
+    //main
     "void main() {\n"
     // Lumière basique
     "vec3 lightPos = vec3(1.0, 1.0, 2.0);\n"
@@ -243,7 +244,10 @@ int main(int argc, char* argv[]){
     "float diff = max(dot(norm, lightDir), 0.0);\n"
     "vec3 diffuse = diff * lightColor;\n"
     "vec3 result = (ambient + diffuse) * objectColor;\n"
-    "FragColor = vec4(result, 1.0);\n"
+    //essai profondeur
+    "float depth = (FragPos.z + 0.3);\n"
+    "FragColor = vec4(vec3(depth), 1.0);\n"
+    //"FragColor = vec4(result, 1.0);\n"
     "}\0";   
 //HEY REPRENDS LA FINIS DE SET LES FRAGMENTS SHADERS !!
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -398,15 +402,17 @@ int main(int argc, char* argv[]){
 
         //dessin du triangle
         glUseProgram(shaderProgram);
-        // Dans la boucle de rendu
+        
         //glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(fitScale)); // Utilise ton fitScale calculé
+        //rotation car le masque est vers le haut dans Blender
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::translate(model, glm::vec3(-cx, -cy, -cz)); // Centre le masque
-        glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        model = glm::scale(model, glm::vec3(fitScale)); // Utilise ton fitScale calculé
+        glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-        // Envoie-les au shader
+        // Envoie au shader
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
         unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
