@@ -45,6 +45,8 @@ with open(output_path, "w") as f:
     # INFO
     # =====================
     f.write(f"// Vertex count: {len(mesh.vertices)}\n")
+    f.write(f"// donc x3 = {3*len(mesh.vertices)} floats\n")
     f.write(f"// Triangle count: {len(mesh.loop_triangles)}\n")
+    f.write(f"// donc x3 = {3*len(mesh.loop_triangles)} int\n")
 
 print(f"Export terminé : {output_path}")
