@@ -227,6 +227,8 @@ int main(int argc, char* argv[]){
 //render loop (maintient la fenêtre ouverte, une loop = une frame)
     //se divise en 4 parties : nettoyage, input, render puis cloture
     while(!glfwWindowShouldClose(window)){
+        //mesure du temps pour animation
+        float currentTime = glfwGetTime();
     //P1 : nettoyage
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Aussi GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT
@@ -285,10 +287,15 @@ int main(int argc, char* argv[]){
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
         
         if(moveRight){    
-            switchTo(1);
+            if(animStartTmps < 0.0f){
+                switchTo(1, currentTime);
+            }   
         }
-        if(moveLeft){     
-            switchTo(0); 
+        if(moveLeft){
+            if(animStartTmps < 0.0f){
+                switchTo(0, currentTime);
+            }     
+             
         }
         //dessin triangle
         //glDrawArrays(GL_TRIANGLES, 0, 3);

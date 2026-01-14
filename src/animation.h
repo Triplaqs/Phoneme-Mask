@@ -1,6 +1,10 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+//constantes d'animations
+extern float animStartTmps; //-1 si rien en cours
+extern float animDuree; //durée d'une animation en secondes
+extern float t; //temps pour interpolation
 
 //Fonctions d'animation
 
@@ -8,7 +12,7 @@
 const float * getPhoneme(int i);
 
 //switch to phoneme i
-void switchTo(int i);
+void switchTo(int i, float currentTime);
 
 //Annexe :
 /*

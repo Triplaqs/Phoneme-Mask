@@ -9,6 +9,11 @@
 #include <cstdlib>
 #include <ctime>
 
+//constantes d'animations
+float animStartTmps = -1.0f; //-1 si rien en cours
+float animDuree = 0.5f; //durée d'une animation en secondes
+float t = 0.0f; //temps pour interpolation
+
 
 //Fonctions d'animation
 
@@ -18,8 +23,18 @@ const float* getPhoneme(int i){
 }
 
 //switch to phoneme i
-void switchTo(int i){
-    return;
+void switchTo(int i, float currentTime){
+    //set up des variables globales d'animation
+    animStartTmps = currentTime; //démarre l'animation
+    t = 0.0f;
+
+    int k1 = facestruct.etat;
+    int k2 = i;
+    const float * phoneme1 = getPhoneme(k1);
+    const float * phoneme2 = getPhoneme(k2);
+
+    //On procède à l'interpolation :
+
 }
 
 
