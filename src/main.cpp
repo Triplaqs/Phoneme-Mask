@@ -13,6 +13,7 @@
 #include <random>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 //headers
 #include "vertex.h"
 #include "animation.h"
@@ -32,7 +33,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 //GESTION INPUTS
 //gestion input clavier : ici, si KEY_ESCAPE préssée
-void processInput(GLFWwindow *window, bool* moveRight, bool* moveLeft, bool* moveUp, bool* moveDown){
+void processInput(GLFWwindow *window, bool* moveRight, bool* moveLeft, bool* moveUp, bool* moveDown, bool* pressR){
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
         glfwSetWindowShouldClose(window, true);
     }
@@ -40,42 +41,7 @@ void processInput(GLFWwindow *window, bool* moveRight, bool* moveLeft, bool* mov
     *moveLeft = (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS);
     *moveUp = (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
     *moveDown = (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS);
-}
-
-//Edit de rendering
-// Fonction pour éditer la position du triangle via uniform (exemple avec translation matrix)
-void setTrianglePosition(unsigned int shaderProgram, float x, float y, float z = 0.0f, float w = 1.0f) {
-    glUseProgram(shaderProgram);
-    int posLoc = glGetUniformLocation(shaderProgram, "offset");
-    glUniform4f(posLoc, x, y, z, w);
-}
-
-// Fonction pour éditer la couleur du triangle via uniform
-void setTriangleColor(unsigned int shaderProgram, float r, float g, float b, float a) {
-    glUseProgram(shaderProgram);
-    int colorLoc = glGetUniformLocation(shaderProgram, "color");
-    glUniform4f(colorLoc, r, g, b, a);
-}
-
-void generateFace(){
-    
-}
-
-
-void setTriangleColorRand(unsigned int shaderProgram) {
-    float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float a = 1.0f;
-    setTriangleColor(shaderProgram, r, g, b, a);
-}
-
-void makeTriangleSpin(unsigned int shaderProgram, float time) {
-    float angle = time;
-    //float angle = (float)glfwGetTime();
-    float x = 0.5f * cos(angle);
-    float y = 0.5f * sin(angle);
-    setTrianglePosition(shaderProgram, x, y);
+    *pressR = (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS);
 }
 
 int main(int argc, char* argv[]){
@@ -84,7 +50,6 @@ int main(int argc, char* argv[]){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    //
     
     
     //Création objet fenêtre
@@ -114,73 +79,9 @@ int main(int argc, char* argv[]){
     //préciser que l'ont veut qu'il resize régulièrement
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-/*Là c'est l'init du triangle du tuto
-    //Création d'objets :
-    //création 3 points :
-
-    //Genère un buffer et créé son l'ID
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-
-    //associe le buffer à la carte graphique 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    //ajout du triangle
-    //Associe les modifications de buffer à celui qu'on a créé (c'est le buffer de référence)
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    //Idem pour le visage
-    glBufferData(GL_ARRAY_BUFFER, sizeof(neutre), neutre, GL_STATIC_DRAW);
-
-    //paramètres :
-    //GL_STREAM_DRAW : La donnée est fixée une seule fois et peu utilisée par le GPU
-    //GL_STATIC_DRAW : La donnée est fixée une seule fois et utilisée plusieurs fois
-    //GL_DYNAMIC_DRAW : la donnée est changée et utilisée plusieurs fois
-    */
-
-    //On remplace 
     
 //DEF DES SHADERS
     //Def de Shader (basique) à travers un C String
-    const char *faceShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "uniform vec4 u_centroid;\n" // centre autour duquel on scale
-    "uniform float u_scale;  \n" // 1.05 ou 0.95
-    "uniform vec4 offset; \n"    
-    "void main()\n"
-    "{\n"
-    "vec4 centered = vec4(aPos, 1.0) - u_centroid;\n"
-    "vec4 scaled = u_centroid + u_scale * centered;\n"
-    "gl_Position = scaled + offset;\n"
-    "gl_PointSize = 6.0; \n"
-    "}\0";
-    
-    /*const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "uniform vec4 u_centroid;\n" // centre autour duquel on scale
-    "uniform float u_scale;  \n" // 1.05 ou 0.95
-    "uniform vec4 offset; \n"    
-    "void main()\n"
-    "{\n"
-    "vec4 centered = vec4(aPos, 1.0) - u_centroid;\n"
-    "vec4 scaled = u_centroid + u_scale * centered;\n"
-    " gl_Position = scaled + offset;\n"
-    "}\0";*/
-
-    /*const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "uniform vec3 u_min;\n"
-    "uniform vec3 u_max;\n"
-    "void main()\n"
-    "{\n"
-    "vec3 pos = (aPos - u_min) / (u_max - u_min);\n"
-    "pos = pos * 2.0 - 1.0;\n"
-    "gl_Position = vec4(pos, 1.0);\n"
-    "}\0";
-    
-    "float z = aPos.z * 0.5;\n"
-    "gl_Position = vec4(aPos.x * 0.2, aPos.y * 0.2, z, 1.0);\n"
-    "}\0";*/
-
     const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     //"layout (location = 1) in vec3 aNormal;\n"
@@ -199,33 +100,18 @@ int main(int argc, char* argv[]){
 
 
     //création objet Shader
-    unsigned int faceShader;
-    faceShader = glCreateShader(GL_VERTEX_SHADER); 
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER); // -> type de shader
 
     
 
     //Association de l'objet et de notre shader
-    glShaderSource(faceShader, 1, &faceShaderSource, NULL);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 
     //compilation
-    glCompileShader(faceShader);
     glCompileShader(vertexShader);
 
     //Idem que le vertex shader mais avec la couleur
-    //Def de Shader 
-    //OLD
-    /*
-    const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "uniform vec4 color = vec4(1.0f, 0.2f, 0.2f, 1.0f);\n"
-    "void main()\n"
-    "{\n"
-    " FragColor = color;\n"
-    "}\0";*/
-//vec4(1.0f, 0.2f, 0.2f, 1.0f)
     const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "in vec3 Normal;\n"
@@ -246,14 +132,14 @@ int main(int argc, char* argv[]){
     "vec3 result = (ambient + diffuse) * objectColor;\n"
     //essai profondeur
     "float depth = (FragPos.z + 0.3);\n"
-    "FragColor = vec4(vec3(depth), 1.0);\n"
-    //"FragColor = vec4(result, 1.0);\n"
+    //"FragColor = vec4(vec3(depth), 1.0);\n"  //ombre
+    "FragColor = vec4(result, 1.0);\n"  //couleur
     "}\0";   
+
 //HEY REPRENDS LA FINIS DE SET LES FRAGMENTS SHADERS !!
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 //création objet Shader
-    unsigned int fragmentShaderFace;
     unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); // -> type de shader
     //Association de l'objet et de notre shader
@@ -277,7 +163,6 @@ int main(int argc, char* argv[]){
 
     //On supprime les objets après les avoir attaché
     
-    glDeleteShader(faceShader);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
@@ -285,48 +170,12 @@ int main(int argc, char* argv[]){
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),  (void*)0);
     glEnableVertexAttribArray(0);
 
-    /*
-//On remplace ici aussi vertices (le triangle) par neutre (le visage)
-//Manipulation d'objet sans structure :
-    // 0. copy our vertices array in a buffer for OpenGL to use
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(neutre), neutre, GL_STATIC_DRAW);
-    // 1. then set the vertex attributes pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-    (void*)0);
-    glEnableVertexAttribArray(0);
-    // 2. use our shader program when we want to render an object
-    glUseProgram(shaderProgram);
-    // 3. now draw the object
-    //someOpenGLFunctionThatDrawsOurTriangle();
-
-//Manipulation d'objet avec structure :
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-
-    // 1. bind Vertex Array Object
-    glBindVertexArray(VAO);
-    // 2. copy our vertices array in a buffer for OpenGL to use
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    //avec triangle
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // utiliser neutre (nuage 3D)
-    glBufferData(GL_ARRAY_BUFFER, sizeof(neutre), neutre, GL_STATIC_DRAW);
- 
-    // 3. then set our vertex attributes pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-    (void*)0);
-    glEnableVertexAttribArray(0);
-    // Drawing code (in render loop) :: ..
-    // 4. draw the object
-    glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
-    //someOpenGLFunctionThatDrawsOurTriangle();
-    */
+    //on initialise notre visage au neutre
+    std::vector<float> face(3*n);
+    std::copy(neutre, neutre + 3*n, face.begin());
 
     GLuint VBO, EBO, VAO;
-    //Attribution des vertices avec indices cette fois
+    //Attribution des vertices aux objets (on tient compte de quels vertices forment des arrêtes avec quelles vertices)
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -334,7 +183,8 @@ int main(int argc, char* argv[]){
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(neutre), neutre, GL_STATIC_DRAW);
+    //.data() pour avoir les données comme float*
+    glBufferData(GL_ARRAY_BUFFER, face.size() * sizeof(float), face.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -345,26 +195,18 @@ int main(int argc, char* argv[]){
     //pour le dessin
     int indexCount = sizeof(indices) / sizeof(unsigned int);
 
-    // Initialiser les uniforms du dilate triangle
-    /*float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
-    float cy = (vertices[1] + vertices[4] + vertices[7]) / 3.0f;
-    float cz = (vertices[2] + vertices[5] + vertices[8]) / 3.0f;
-    GLint loc_centroid = glGetUniformLocation(shaderProgram, "u_centroid");
-    GLint loc_scale = glGetUniformLocation(shaderProgram, "u_scale");
-    glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
-    glUniform1f(loc_scale, 1.0f);*/
-
+    
     //idem pour le visage
-    // Initialiser les uniforms du modèle à partir de neutre[]
-    int numVerts = (int)((sizeof(neutre) / sizeof(float)) / 3);
+    // Initialiser les uniforms du modèle à partir de face[] (=neutre ici)
+    int numVerts = (int)((sizeof(face) / sizeof(float)) / 3);
 
     float cx = 0.0f, cy = 0.0f, cz = 0.0f;
     float minx = 1e9f, miny = 1e9f, minz = 1e9f;
     float maxx = -1e9f, maxy = -1e9f, maxz = -1e9f;
     for (int i = 0; i < numVerts; ++i) {
-        float x = neutre[3*i + 0];
-        float y = neutre[3*i + 1];
-        float z = neutre[3*i + 2];
+        float x = face[3*i + 0];
+        float y = face[3*i + 1];
+        float z = face[3*i + 2];
         cx += x; cy += y; cz += z;
         minx = std::min(minx, x); miny = std::min(miny, y); minz = std::min(minz, z);
         maxx = std::max(maxx, x); maxy = std::max(maxy, y); maxz = std::max(maxz, z);
@@ -395,10 +237,22 @@ int main(int argc, char* argv[]){
         bool moveLeft = false;
         bool moveUp = false;
         bool moveDown = false;
-        processInput(window, &moveRight, &moveLeft, &moveUp, &moveDown);
+        bool pressR = false;
+        processInput(window, &moveRight, &moveLeft, &moveUp, &moveDown, &pressR);
 
     //P3 : gestion du render
         //Attention : au choix du programme Shader utilisé
+
+        //réaction inputs
+        if(moveUp){
+            camera.viewz += 0.5;
+        }
+        if(moveDown){   
+            camera.viewz -= 0.5; 
+        }
+        if(pressR){   
+            camera.reset(); 
+        }
 
         //dessin du triangle
         glUseProgram(shaderProgram);
@@ -408,8 +262,8 @@ int main(int argc, char* argv[]){
         //rotation car le masque est vers le haut dans Blender
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::translate(model, glm::vec3(-cx, -cy, -cz)); // Centre le masque
-        model = glm::scale(model, glm::vec3(fitScale)); // Utilise ton fitScale calculé
-        glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        model = glm::scale(model, glm::vec3(fitScale*0.5f)); // Utilise fitScale calculé
+        glm::mat4 view = glm::lookAt(glm::vec3(camera.viewx, camera.viewy, camera.viewz), glm::vec3(0, -2.5, 0), glm::vec3(0, 1, 0));
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         // Envoie au shader
@@ -429,44 +283,12 @@ int main(int argc, char* argv[]){
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //essaye GL_FILL
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-
-        
-        
-        // Accumuler la dilatation et la température
-        if(moveUp){    
-            //future interaction clavier
-        }
-        if(moveDown){    
-            //future interaction clavier
-        }
-        
-        // Réinitialiser les uniforms à chaque frame
-        /*float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
-            currentScale *= 1.01f;  // Augmenter de 1% par frame
-            heatTriangle(shaderProgram, -0.01f);  // Augmenter la température
-        }
-        if(moveDown){    
-            currentScale *= 0.99f;  // Diminuer de 1% par frame
-            heatTriangle(shaderProgram, 0.01f);  // Diminuer la température
-        }
-        
-        // Réinitialiser les uniforms à chaque frame
-        float cx = (vertices[0] + vertices[3] + vertices[6]) / 3.0f;
-        float cy = (vertices[1] + vertices[4] + vertices[7]) / 3.0f;
-        float cz = (vertices[2] + vertices[5] + vertices[8]) / 3.0f;
-        GLint loc_centroid = glGetUniformLocation(shaderProgram, "u_centroid");
-        GLint loc_scale = glGetUniformLocation(shaderProgram, "u_scale");
-        GLint loc_offset = glGetUniformLocation(shaderProgram, "offset");
-        glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
-        glUniform1f(loc_scale, currentScale);
-        glUniform4f(loc_offset, 0.0f, 0.0f, 0.0f, 0.0f); */
         
         if(moveRight){    
-            setTriangleColorRand(shaderProgram);
+            switchTo(1);
         }
-        if(moveLeft){    
-            currentScale = 1.0f;  // Annuler la dilatation quand on tourne
-            makeTriangleSpin(shaderProgram, (float)glfwGetTime());
+        if(moveLeft){     
+            switchTo(0); 
         }
         //dessin triangle
         //glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -485,3 +307,6 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
+
+
+//voir ligne 130 pour le shader depuis le vector pour le fait que c'est tout noir et bougé bizarre
