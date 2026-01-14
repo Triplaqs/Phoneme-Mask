@@ -14,6 +14,9 @@ const float * getPhoneme(int i);
 //switch to phoneme i
 void switchTo(int i, float currentTime);
 
+//switched to phoneme i (edit quand la transition est finie)
+void switchedTo(int i);
+
 //Annexe :
 /*
 0  :  neutre[]

@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <iterator>
 //headers
 #include "vertex.h"
 #include "animation.h"
@@ -132,8 +133,8 @@ int main(int argc, char* argv[]){
     "vec3 result = (ambient + diffuse) * objectColor;\n"
     //essai profondeur
     "float depth = (FragPos.z + 0.3);\n"
-    //"FragColor = vec4(vec3(depth), 1.0);\n"  //ombre
-    "FragColor = vec4(result, 1.0);\n"  //couleur
+    "FragColor = vec4(vec3(depth), 1.0);\n"  //ombre
+    //"FragColor = vec4(result, 1.0);\n"  //couleur
     "}\0";   
 
 //HEY REPRENDS LA FINIS DE SET LES FRAGMENTS SHADERS !!
@@ -226,6 +227,8 @@ int main(int argc, char* argv[]){
     glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
     glUniform1f(loc_scale, fitScale * 0.9f); // petit padding
 
+    printf("%d", std::equal(neutre, neutre + 3*n, phoneme_A));
+
 
 //render loop (maintient la fenêtre ouverte, une loop = une frame)
     //se divise en 4 parties : nettoyage, input, render puis cloture
@@ -269,7 +272,7 @@ int main(int argc, char* argv[]){
         model = glm::scale(model, glm::vec3(fitScale*0.5f)); // Utilise fitScale calculé 
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         //model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //axe de profil
-        //model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //flip le masque
+        model = glm::rotate(model, glm::radians(-180.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //flip le masque
         model = glm::translate(model, glm::vec3(-cx, -cy, -cz)); // Centre le masque
         glm::mat4 view = glm::lookAt(glm::vec3(camera.viewx, camera.viewy, camera.viewz), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); //position de la cam, vers où elle regarde, up vecteur
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -311,7 +314,8 @@ int main(int argc, char* argv[]){
                 t = 1.0f;
                 animStartTmps = -1.0f; //fin de l'animation
                 //mettre à jour l'état du visage
-                facestruct.etat = (facestruct.etat == 0) ? 1 : 0;
+                //facestruct.etat = (facestruct.etat == 0) ? 1 : 0;
+                switchedTo(facestruct.next_etat);
             }
             //interpolation des vertices
             const float * phoneme1 = getPhoneme(facestruct.etat);

@@ -35,7 +35,8 @@ with open(output_path, "w") as f:
         # =====================
         f.write(f"const float {key.name}[] = ")
         f.write("{\n")
-        for v in mesh.vertices:
+        #for v in mesh.vertices:
+        for v in key.data:
             f.write(f"    {v.co.x:.6f}f, {v.co.y:.6f}f, {v.co.z:.6f}f,\n")
         f.write("};\n\n\n")
 
