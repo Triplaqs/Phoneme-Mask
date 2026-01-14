@@ -23,6 +23,7 @@ typedef struct Camera {
     int viewx = 0;
     int viewy = 0;
     int viewz = 20;
+    //reset la position de la caméra 
     void reset() {
         viewx = 0;
         viewy = 0;
