@@ -18,7 +18,7 @@
 #include "vertex.h"
 #include "animation.h"
 
-
+//Anciennes variables pour shaders
 // État de la dilatation (accumulation)
 float currentScale = 1.0f;
 // État de la température (accumulation)
@@ -171,7 +171,8 @@ int main(int argc, char* argv[]){
     glEnableVertexAttribArray(0);
 
     //on initialise notre visage au neutre
-    std::vector<float> face(3*n);
+    //std::vector<float> face(3*n);
+    face.resize(3*n);
     std::copy(neutre, neutre + 3*n, face.begin());
 
     GLuint VBO, EBO, VAO;
@@ -198,12 +199,14 @@ int main(int argc, char* argv[]){
     
     //idem pour le visage
     // Initialiser les uniforms du modèle à partir de face[] (=neutre ici)
-    int numVerts = (int)((sizeof(face) / sizeof(float)) / 3);
+    //int numVerts = (int)((sizeof(face) / sizeof(float)) / 3);  
+    //int numVerts = face.size() / 3;
+    //plus besoin numverts = n (global) 
 
     float cx = 0.0f, cy = 0.0f, cz = 0.0f;
     float minx = 1e9f, miny = 1e9f, minz = 1e9f;
     float maxx = -1e9f, maxy = -1e9f, maxz = -1e9f;
-    for (int i = 0; i < numVerts; ++i) {
+    for (int i = 0; i < n; ++i) {
         float x = face[3*i + 0];
         float y = face[3*i + 1];
         float z = face[3*i + 2];
@@ -211,7 +214,7 @@ int main(int argc, char* argv[]){
         minx = std::min(minx, x); miny = std::min(miny, y); minz = std::min(minz, z);
         maxx = std::max(maxx, x); maxy = std::max(maxy, y); maxz = std::max(maxz, z);
     }
-    cx /= numVerts; cy /= numVerts; cz /= numVerts;
+    cx /= n; cy /= n; cz /= n;
     float rangeX = maxx - minx;
     float rangeY = maxy - miny;
     float rangeZ = maxz - minz;
@@ -247,10 +250,10 @@ int main(int argc, char* argv[]){
 
         //réaction inputs
         if(moveUp){
-            camera.viewz += 0.5;
+            camera.viewz += 0.05;
         }
         if(moveDown){   
-            camera.viewz -= 0.5; 
+            camera.viewz -= 0.05; 
         }
         if(pressR){   
             camera.reset(); 
@@ -262,10 +265,13 @@ int main(int argc, char* argv[]){
         //glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 model = glm::mat4(1.0f);
         //rotation car le masque est vers le haut dans Blender
+        //centrer, tourner, scale (ordre)
+        model = glm::scale(model, glm::vec3(fitScale*0.5f)); // Utilise fitScale calculé 
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        //model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //axe de profil
+        //model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //flip le masque
         model = glm::translate(model, glm::vec3(-cx, -cy, -cz)); // Centre le masque
-        model = glm::scale(model, glm::vec3(fitScale*0.5f)); // Utilise fitScale calculé
-        glm::mat4 view = glm::lookAt(glm::vec3(camera.viewx, camera.viewy, camera.viewz), glm::vec3(0, -2.5, 0), glm::vec3(0, 1, 0));
+        glm::mat4 view = glm::lookAt(glm::vec3(camera.viewx, camera.viewy, camera.viewz), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); //position de la cam, vers où elle regarde, up vecteur
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         // Envoie au shader
@@ -295,12 +301,28 @@ int main(int argc, char* argv[]){
             if(animStartTmps < 0.0f){
                 switchTo(0, currentTime);
             }     
-             
         }
-        //dessin triangle
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
-        //dessin visage
-        //glDrawArrays(GL_POINTS, 0, numVerts);
+
+        //Animation (= interpolation des phonèmes)
+        if(animStartTmps >= 0.0f){
+            //calcul de t
+            t = (currentTime - animStartTmps) / animDuree;
+            if(t >= 1.0f){
+                t = 1.0f;
+                animStartTmps = -1.0f; //fin de l'animation
+                //mettre à jour l'état du visage
+                facestruct.etat = (facestruct.etat == 0) ? 1 : 0;
+            }
+            //interpolation des vertices
+            const float * phoneme1 = getPhoneme(facestruct.etat);
+            const float * phoneme2 = getPhoneme(facestruct.next_etat);
+            for(int i = 0; i < 3*n; i++){
+                face[i] = (1.0f - t) * phoneme1[i] + t * phoneme2[i];
+            }
+            //mettre à jour le buffer des vertices
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, face.size() * sizeof(float), face.data());
+        }
         
     //P4 : fin render loop
         //met les pixels en couleur
@@ -313,7 +335,3 @@ int main(int argc, char* argv[]){
     glfwTerminate();
     return 0;
 }
-
-
-
-//voir ligne 130 pour le shader depuis le vector pour le fait que c'est tout noir et bougé bizarre

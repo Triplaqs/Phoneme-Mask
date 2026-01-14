@@ -22,19 +22,12 @@ const float* getPhoneme(int i){
     return phonemes[i];
 }
 
-//switch to phoneme i
+//switch to phoneme i (set up la transition)
 void switchTo(int i, float currentTime){
     //set up des variables globales d'animation
     animStartTmps = currentTime; //démarre l'animation
-    t = 0.0f;
-
-    int k1 = facestruct.etat;
-    int k2 = i;
-    const float * phoneme1 = getPhoneme(k1);
-    const float * phoneme2 = getPhoneme(k2);
-
-    //On procède à l'interpolation :
-
+    //t = 0.0f; //re défini à chaque fois
+    facestruct.next_etat = i;
 }
 
 

@@ -17,17 +17,18 @@ typedef struct Face {
     std::vector<float> points; //liste des vertices
     //int nb_pts;    // nombre de vertices (plus besoin, variable globale n)
     int etat = 0; //phoneme actuel
+    int next_etat = 1; //phoneme suivant
 } Face;
 
 typedef struct Camera {
-    int viewx = 0;
-    int viewy = 0;
-    int viewz = 20;
+    float viewx = 0.0f;
+    float viewy = 0.0f;
+    float viewz = -15.0f;
     //reset la position de la caméra 
     void reset() {
-        viewx = 0;
-        viewy = 0;
-        viewz = 20;
+        viewx = 0.0f;
+        viewy = 0.0f;
+        viewz = -15.0f;
     }
 } Camera;
 
