@@ -11,7 +11,7 @@
 
 //constantes d'animations
 float animStartTmps = -1.0f; //-1 si rien en cours
-float animDuree = 0.5f; //durée d'une animation en secondes
+float animDuree = 0.2f; //durée d'une animation en secondes
 float t = 0.0f; //temps pour interpolation
 
 
@@ -27,6 +27,14 @@ void switchTo(int i, float currentTime){
     //set up des variables globales d'animation
     animStartTmps = currentTime; //démarre l'animation
     //t = 0.0f; //re défini à chaque fois
+    facestruct.next_etat = i;
+}
+
+//switched to phoneme (facestruc.next_etat) (edit quand la transition est finie)
+void switchedTo(int i){
+    //set up des variables globales d'animation
+    //t = 0.0f; //re défini à chaque fois
+    facestruct.etat = facestruct.next_etat;
     facestruct.next_etat = i;
 }
 

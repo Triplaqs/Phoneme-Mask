@@ -23,12 +23,12 @@ typedef struct Face {
 typedef struct Camera {
     float viewx = 0.0f;
     float viewy = 0.0f;
-    float viewz = -15.0f;
+    float viewz = 2.0f;
     //reset la position de la caméra 
     void reset() {
         viewx = 0.0f;
         viewy = 0.0f;
-        viewz = -15.0f;
+        viewz = 2.0f;
     }
 } Camera;
 
@@ -52,7 +52,7 @@ extern int n;
 extern std::vector<float> face;
 //Liste de toutes les phonèmes
 extern const float neutre[2385];
-extern const float Phoneme_A[2385];
+extern const float phoneme_A[2385];
 //Liste de toutes les connexions de vertices (formes les triangles)
 extern const unsigned int indices[4260];
 
