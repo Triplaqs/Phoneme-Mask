@@ -227,7 +227,7 @@ int main(int argc, char* argv[]){
     glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
     glUniform1f(loc_scale, fitScale * 0.9f); // petit padding
 
-    printf("%d", std::equal(neutre, neutre + 3*n, phoneme_A));
+    //printf("%d", std::equal(neutre, neutre + 3*n, phoneme_A));
 
 
 //render loop (maintient la fenêtre ouverte, une loop = une frame)
