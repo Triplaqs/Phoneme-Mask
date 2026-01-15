@@ -1,7 +1,7 @@
 # Phoneme-Mask
 Animating a Mask with different phonemes forms. 
 
-### Here a sample of the animation :
+### Here a sample of the animation (Phoneme A) :
 ![Animation](./results/neutral_to_a.gif)
 
 ### Here the current mask displayed :
