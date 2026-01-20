@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <string>
 
 
 
@@ -16,8 +17,17 @@ typedef struct Point {
 typedef struct Face {
     std::vector<float> points; //liste des vertices
     //int nb_pts;    // nombre de vertices (plus besoin, variable globale n)
-    int etat = 0; //phoneme actuel
-    int next_etat = 1; //phoneme suivant
+    int etat = 15; //phoneme actuel
+    int next_etat = 15; //phoneme suivant
+    std::vector<int> phrase;
+    void set_neutre(){
+        etat = 0;
+        next_etat = 0;
+    }
+    void set_smile(){
+        etat = 15;
+        next_etat = 15;
+    }
 } Face;
 
 typedef struct Camera {
@@ -51,13 +61,27 @@ extern int n;
 //le set de vertices qui est réellement affiché
 extern std::vector<float> face;
 //Liste de toutes les phonèmes
-extern const float neutre[2385];
+extern const float neutre[];  
 extern const float phoneme_A[2385];
+extern const float phoneme_E[2385];
+extern const float phoneme_I[2385];
+extern const float phoneme_O[2385];
+extern const float phoneme_U[2385];
+extern const float phoneme_OU[2385];
+extern const float phoneme_EH[2385];
+extern const float phoneme_IN[2385];
+extern const float phoneme_P[2385];
+extern const float phoneme_K[2385];
+extern const float phoneme_L[2385];
+extern const float phoneme_W[2385];
+extern const float phoneme_F[2385];
+extern const float phoneme_S[2385];
+extern const float smile[2385];
 //Liste de toutes les connexions de vertices (formes les triangles)
 extern const unsigned int indices[4260];
 
 
 //Liste des phonèmes
-extern const float* phonemes[2];
+extern const float* phonemes[16];
 
 #endif

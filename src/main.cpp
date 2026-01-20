@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 //autre
+#include <string>
 #include <random>
 #include <cstdlib>
 #include <ctime>
@@ -34,7 +35,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 //GESTION INPUTS
 //gestion input clavier : ici, si KEY_ESCAPE préssée
-void processInput(GLFWwindow *window, bool* moveRight, bool* moveLeft, bool* moveUp, bool* moveDown, bool* pressR){
+void processInput(GLFWwindow *window, bool* moveRight, bool* moveLeft, bool* moveUp, bool* moveDown, bool* pressR, bool* pressA, bool* pressO){
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
         glfwSetWindowShouldClose(window, true);
     }
@@ -43,6 +44,8 @@ void processInput(GLFWwindow *window, bool* moveRight, bool* moveLeft, bool* mov
     *moveUp = (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
     *moveDown = (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS);
     *pressR = (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS);
+    *pressA = (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS);
+    *pressO = (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS);
 }
 
 int main(int argc, char* argv[]){
@@ -227,8 +230,14 @@ int main(int argc, char* argv[]){
     glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
     glUniform1f(loc_scale, fitScale * 0.9f); // petit padding
 
-    printf("%d", std::equal(neutre, neutre + 3*n, phoneme_A));
-
+    //printf("%d", std::equal(neutre, neutre + 3*n, phoneme_A));
+    std::string input;
+    std::cout << "Write a sentence !\n"; // Type a number and press enter
+    //std::cin >> input; // Get user input from the keyboard
+    std::getline(std::cin, input); //pour avoir les espaces avec
+    //asup debug
+    inputToPhrase(input);
+    //display_phrase();
 
 //render loop (maintient la fenêtre ouverte, une loop = une frame)
     //se divise en 4 parties : nettoyage, input, render puis cloture
@@ -246,7 +255,10 @@ int main(int argc, char* argv[]){
         bool moveUp = false;
         bool moveDown = false;
         bool pressR = false;
-        processInput(window, &moveRight, &moveLeft, &moveUp, &moveDown, &pressR);
+        //Set Phonemes pour tester l'anim ;)
+        bool pressA = false;
+        bool pressO = false;
+        processInput(window, &moveRight, &moveLeft, &moveUp, &moveDown, &pressR, &pressA, &pressO);
 
     //P3 : gestion du render
         //Attention : au choix du programme Shader utilisé
@@ -260,6 +272,7 @@ int main(int argc, char* argv[]){
         }
         if(pressR){   
             camera.reset(); 
+            facestruct.set_neutre();
         }
 
         //dessin du triangle
@@ -295,15 +308,32 @@ int main(int argc, char* argv[]){
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
         
+        //On passe des commandes manuelles à l'input utilisateur
+        /*
         if(moveRight){    
             if(animStartTmps < 0.0f){
-                switchTo(1, currentTime);
+                switchTo(3, currentTime);
             }   
         }
         if(moveLeft){
             if(animStartTmps < 0.0f){
                 switchTo(0, currentTime);
             }     
+        }
+        if(pressA){
+            if(animStartTmps < 0.0f){
+                switchTo(1, currentTime);
+            }     
+        }
+        if(pressO){
+            if(animStartTmps < 0.0f){
+                switchTo(2, currentTime);
+            }     
+        }
+        */
+        //Si prononciation finie :
+        if(animStartTmps < 0.0f){
+            next_mouth(currentTime);
         }
 
         //Animation (= interpolation des phonèmes)
@@ -315,7 +345,7 @@ int main(int argc, char* argv[]){
                 animStartTmps = -1.0f; //fin de l'animation
                 //mettre à jour l'état du visage
                 //facestruct.etat = (facestruct.etat == 0) ? 1 : 0;
-                switchedTo(facestruct.next_etat);
+                //switchedTo(facestruct.next_etat); //plus besoin
             }
             //interpolation des vertices
             const float * phoneme1 = getPhoneme(facestruct.etat);

@@ -5,14 +5,39 @@
 #include "vertex.h"
 #include "animation.h"
 //autre
+#include <iostream>
+#include <vector>
+#include <string>
 #include <random>
 #include <cstdlib>
 #include <ctime>
+#include <unordered_map>
 
 //constantes d'animations
 float animStartTmps = -1.0f; //-1 si rien en cours
 float animDuree = 0.2f; //durée d'une animation en secondes
 float t = 0.0f; //temps pour interpolation
+
+// Définition du dictionnaire d'association
+std::unordered_map<std::string, int> dico_asso = {
+    {" ", 0}, {". ", 0}, {" ;", 0}, {", ", 0},
+    {"A", 1}, {"a", 1}, {"À", 1}, {"à", 1}, 
+    {"E", 2}, {"e", 2},
+    {"I", 3}, {"i", 3}, {"Î", 3}, {"î", 3},
+    {"O", 4}, {"o", 4}, {"Ô", 4}, {"ô", 4},
+    {"U", 5}, {"u", 5}, {"Û", 5}, {"û", 5},
+    {"OU", 6}, {"ou", 6}, {"Ou", 6}, {"OÙ", 6}, {"où", 6}, {"Où", 6}, {"OÛ", 6}, {"oû", 6}, {"Oû", 6}, 
+    {"eh", 7}, {"è", 7}, {"ê", 7}, {"EH", 7}, {"È", 7}, {"Ê", 7}, {"Eh", 7},
+    {"IN", 8}, {"in", 8}, {"In", 8}, {"UN", 8}, {"un", 8}, {"Un", 8},
+    {"P", 9}, {"M", 9}, {"B", 9}, {"p", 9}, {"m", 9}, {"b", 9},
+    {"C", 10}, {"D", 10}, {"G", 10}, {"K", 10}, {"R", 10}, {"T", 10}, {"Y", 10}, {"Z", 10}, {"J", 10},
+    {"c", 10}, {"d", 10}, {"g", 10}, {"k", 10}, {"r", 10}, {"t", 10}, {"y", 10}, {"z", 10}, {"j", 10},
+    {"l", 11}, {"L", 11},
+    {"W", 12}, {"Q", 12}, {"w", 12}, {"q", 12}, {"ON", 12}, {"on", 12}, {"On", 12},
+    {"f", 13}, {"v", 13}, {"F", 13}, {"V", 13}, 
+    {"S", 14}, {"s", 14}, {"Ç", 14}, {"ç", 14}, {"N", 14}, {"n", 14},
+    {" !", 15}, {"!", 15}, {" ?", 15}, {"?", 15}
+};
 
 
 //Fonctions d'animation
@@ -38,39 +63,58 @@ void switchedTo(int i){
     facestruct.next_etat = i;
 }
 
+//Transform the user string input into a list of phonetics attributed to facestruct.phrase
+void inputToPhrase(std::string input){
+    std::vector<int> phr;
+    std::string text = input;
+    size_t i = 0;
+    while (i < text.size()) {
+        bool ok = false;
+        //on check en priorité 2 caractères
+        if (i + 1 < text.size()) {
+            std::string paire = text.substr(i, 2); //on regarde si les 2 prochains chars sont dans le dico asso
+            if (dico_asso.count(paire)) {
+                phr.push_back(dico_asso[paire]);
+                i += 2; 
+                ok = true;
+            }
+        }
+        //on check 1 carac
+        if (!ok) {
+            std::string solo = text.substr(i, 1); // Extrait 1 char à partir de i
+            if (dico_asso.count(solo)) {
+                phr.push_back(dico_asso[solo]);
+                i += 1; 
+                ok = true;
+            }
+        }
+        //caractère non reconnu par le dico -> erreur
+        if (!ok) {
+            std::cerr << "Erreur : Le caractère '" << text[i] << "' à l'index " << i << " est inconnu." << std::endl;
+            return; //valid crashout
+        }
 
-//Edit de rendering
-// Fonction pour éditer la position du triangle via uniform (exemple avec translation matrix)
-void setTrianglePosition(unsigned int shaderProgram, float x, float y, float z, float w) { //predéfinitions dans le headers
-    glUseProgram(shaderProgram);
-    int posLoc = glGetUniformLocation(shaderProgram, "offset");
-    glUniform4f(posLoc, x, y, z, w);
+    }
+    facestruct.phrase = phr;
 }
 
-// Fonction pour éditer la couleur du triangle via uniform
-void setTriangleColor(unsigned int shaderProgram, float r, float g, float b, float a) {
-    glUseProgram(shaderProgram);
-    int colorLoc = glGetUniformLocation(shaderProgram, "color");
-    glUniform4f(colorLoc, r, g, b, a);
+//update the phrase vector of facestruct and the current states and nextstate
+void next_mouth(float currentTime){
+    animStartTmps = currentTime; //on démarre l'anim
+    if(facestruct.phrase.empty()){
+        facestruct.set_smile();
+    }
+    else{
+        int phon = facestruct.phrase.front(); //on recup la prochaine phoneme
+        facestruct.phrase.erase(facestruct.phrase.begin()); //on enlève le prochain element de la file d'attente
+        facestruct.etat = facestruct.next_etat; //on établi le switch de phoneme
+        facestruct.next_etat = phon; //on prépare la prochaine phoneme
+    }
 }
 
-void generateFace(){
-    //Peut être pour une autre fois
-}
-
-
-void setTriangleColorRand(unsigned int shaderProgram) {
-    float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float a = 1.0f;
-    setTriangleColor(shaderProgram, r, g, b, a);
-}
-
-void makeTriangleSpin(unsigned int shaderProgram, float time) {
-    float angle = time;
-    //float angle = (float)glfwGetTime();
-    float x = 0.5f * cos(angle);
-    float y = 0.5f * sin(angle);
-    setTrianglePosition(shaderProgram, x, y);
+//affiche phrase pour débug
+void display_phrase(){
+    for(int i = 0; i<facestruct.phrase.size(); i++){
+        printf("%d,", facestruct.phrase[i]);
+    }
 }
