@@ -13,6 +13,9 @@ extern float t; //temps pour interpolation
 extern std::unordered_map<std::string, int> dico_asso; //associe les lettres à des numéros de phoneme
 //Fonctions d'animation
 
+//demande la prochaine séquence de caractères
+void ask_string();
+
 //Prends un indice i et renvoie le phonème associé (voir attribution Annexe en dessous)
 const float * getPhoneme(int i);
 
@@ -38,8 +41,9 @@ void switchedTo(int i);
 11 : phoneme_L[]   (L)
 12 : phoneme_W[]   (W, Q)
 13 : phoneme_F[]   (F, V)   
-14 : phoneme_S[]   (S, ç)   
-15 : smile[]
+14 : phoneme_S[]   (S, ç)  
+15 : phoneme_CH[]   (CH)    
+16 : smile[]
 */
 
 //Transform the user string input into a list of phonetics attributed to facestruct.phrase

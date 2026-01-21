@@ -230,15 +230,6 @@ int main(int argc, char* argv[]){
     glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
     glUniform1f(loc_scale, fitScale * 0.9f); // petit padding
 
-    //printf("%d", std::equal(neutre, neutre + 3*n, phoneme_A));
-    std::string input;
-    std::cout << "Write a sentence !\n"; // Type a number and press enter
-    //std::cin >> input; // Get user input from the keyboard
-    std::getline(std::cin, input); //pour avoir les espaces avec
-    //asup debug
-    inputToPhrase(input);
-    //display_phrase();
-
 //render loop (maintient la fenêtre ouverte, une loop = une frame)
     //se divise en 4 parties : nettoyage, input, render puis cloture
     while(!glfwWindowShouldClose(window)){
@@ -273,6 +264,7 @@ int main(int argc, char* argv[]){
         if(pressR){   
             camera.reset(); 
             facestruct.set_neutre();
+            ask_string();
         }
 
         //dessin du triangle

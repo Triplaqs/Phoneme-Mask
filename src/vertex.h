@@ -17,16 +17,16 @@ typedef struct Point {
 typedef struct Face {
     std::vector<float> points; //liste des vertices
     //int nb_pts;    // nombre de vertices (plus besoin, variable globale n)
-    int etat = 15; //phoneme actuel
-    int next_etat = 15; //phoneme suivant
+    int etat = 16; //phoneme actuel
+    int next_etat = 16; //phoneme suivant
     std::vector<int> phrase;
     void set_neutre(){
         etat = 0;
         next_etat = 0;
     }
     void set_smile(){
-        etat = 15;
-        next_etat = 15;
+        etat = 16;
+        next_etat = 16;
     }
 } Face;
 
@@ -76,12 +76,13 @@ extern const float phoneme_L[2385];
 extern const float phoneme_W[2385];
 extern const float phoneme_F[2385];
 extern const float phoneme_S[2385];
+extern const float phoneme_CH[2385];
 extern const float smile[2385];
 //Liste de toutes les connexions de vertices (formes les triangles)
 extern const unsigned int indices[4260];
 
 
 //Liste des phonèmes
-extern const float* phonemes[16];
+extern const float* phonemes[17];
 
 #endif
