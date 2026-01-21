@@ -10,6 +10,8 @@ Animating a Mask with different phonemes forms.
 ### Speaking to user's input:
 I had to choose a way to translate texts into phonemes, so I chose French pronounciation.
 ![Translation](./results/translate.png)
+
+### Results:
 Here are examples of sentences red by the mask !
 ![Speaking1](./results/speaking1.gif)
 ![Speaking2](./results/speaking2.gif)
