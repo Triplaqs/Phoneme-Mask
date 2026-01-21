@@ -7,7 +7,7 @@ Animating a Mask with different phonemes forms.
 ### Here the current mask displayed:
 ![Neutral Face](./results/neutral_face.png)
 
-### Speaking to user's input:
+### Speaking to user input:
 I had to choose a way to translate texts into phonemes, so I chose French pronounciation.
 ![Translation](./results/translate.png)
 
