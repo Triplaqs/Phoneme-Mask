@@ -17,6 +17,10 @@
 float animStartTmps = -1.0f; //-1 si rien en cours
 float animDuree = 0.1f; //durée d'une animation en secondes
 float t = 0.0f; //temps pour interpolation
+char inputBuffer[256] = "Hello World";
+bool endphrase = true;
+bool sent = false;
+std::string sentence;
 
 // Définition du dictionnaire d'association
 std::unordered_map<std::string, int> dico_asso = {
@@ -111,6 +115,15 @@ void inputToPhrase(std::string input){
     facestruct.phrase = phr;
 }
 
+// Input to Phrase mais pour le ImGui
+void play_sentence_from_gui(std::string text){
+    sent = false;
+    inputToPhrase(text);
+    camera.reset(); 
+    facestruct.set_neutre();
+    
+}
+
 //update the phrase vector of facestruct and the current states and nextstate
 void next_mouth(float currentTime){
     animStartTmps = currentTime; //on démarre l'anim
@@ -121,7 +134,8 @@ void next_mouth(float currentTime){
         }
         else{
             facestruct.set_smile();
-            ask_string();
+            endphrase = true;
+            //ask_string();
         }
     }
     else{

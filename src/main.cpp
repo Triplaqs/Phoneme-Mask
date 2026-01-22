@@ -3,6 +3,10 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <ostream>
+//Includes ImGui
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 //outils pour la géométrie c++
 #include <vector>
 #include <iostream>
@@ -11,6 +15,7 @@
 #include <glm/gtc/type_ptr.hpp>
 //autre
 #include <string>
+#include <string.h>
 #include <random>
 #include <cstdlib>
 #include <ctime>
@@ -56,6 +61,7 @@ int main(int argc, char* argv[]){
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     
     
+    
     //Création objet fenêtre
     GLFWwindow* window = glfwCreateWindow(800, 600, "Phoneme Mouth", NULL, NULL);
     if (window == NULL){
@@ -82,6 +88,15 @@ int main(int argc, char* argv[]){
     void framebuffer_size_callback(GLFWwindow* window, int width, int height);
     //préciser que l'ont veut qu'il resize régulièrement
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     
 //DEF DES SHADERS
@@ -235,6 +250,7 @@ int main(int argc, char* argv[]){
     while(!glfwWindowShouldClose(window)){
         //mesure du temps pour animation
         float currentTime = glfwGetTime();
+
     //P1 : nettoyage
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Aussi GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT
@@ -251,7 +267,9 @@ int main(int argc, char* argv[]){
         bool pressO = false;
         processInput(window, &moveRight, &moveLeft, &moveUp, &moveDown, &pressR, &pressA, &pressO);
 
+
     //P3 : gestion du render
+
         //Attention : au choix du programme Shader utilisé
 
         //réaction inputs
@@ -264,7 +282,9 @@ int main(int argc, char* argv[]){
         if(pressR){   
             camera.reset(); 
             facestruct.set_neutre();
-            ask_string();
+            facestruct.reset_phrase();
+            sent = false;
+            //ask_string(); //plus besoin depuis ImGui
         }
 
         //dessin du triangle
@@ -279,7 +299,7 @@ int main(int argc, char* argv[]){
         //model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //axe de profil
         model = glm::rotate(model, glm::radians(-180.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //flip le masque
         model = glm::translate(model, glm::vec3(-cx, -cy, -cz)); // Centre le masque
-        glm::mat4 view = glm::lookAt(glm::vec3(camera.viewx, camera.viewy, camera.viewz), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); //position de la cam, vers où elle regarde, up vecteur
+        glm::mat4 view = glm::lookAt(glm::vec3(camera.viewx, camera.viewy, camera.viewz), glm::vec3(0, -0.18, 0), glm::vec3(0, 1, 0)); //position de la cam, vers où elle regarde, up vecteur
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         // Envoie au shader
@@ -300,32 +320,13 @@ int main(int argc, char* argv[]){
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
         
-        //On passe des commandes manuelles à l'input utilisateur
-        /*
-        if(moveRight){    
-            if(animStartTmps < 0.0f){
-                switchTo(3, currentTime);
-            }   
-        }
-        if(moveLeft){
-            if(animStartTmps < 0.0f){
-                switchTo(0, currentTime);
-            }     
-        }
-        if(pressA){
-            if(animStartTmps < 0.0f){
-                switchTo(1, currentTime);
-            }     
-        }
-        if(pressO){
-            if(animStartTmps < 0.0f){
-                switchTo(2, currentTime);
-            }     
-        }
-        */
         //Si prononciation finie :
-        if(animStartTmps < 0.0f){
+        if((animStartTmps < 0.0f) && !(facestruct.fin_phrase())){ //voir les conditions avec le reste de la liste + Conditions pour redemander la phrase  ? (method de classe ?)
             next_mouth(currentTime);
+        }
+
+        if((animStartTmps < 0.0f) && (facestruct.fin_phrase()) && sent){ //voir les conditions avec le reste de la liste + Conditions pour redemander la phrase  ? (method de classe ?)
+            play_sentence_from_gui(sentence.c_str());
         }
 
         //Animation (= interpolation des phonèmes)
@@ -350,14 +351,75 @@ int main(int argc, char* argv[]){
             glBufferSubData(GL_ARRAY_BUFFER, 0, face.size() * sizeof(float), face.data());
         }
         
+    // 4. IMGUI (Interface par dessus la 3D)
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // -- Positionnement de la fenêtre (Point 1) --
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImVec2 work_pos = viewport->Pos;
+        ImVec2 work_size = viewport->Size;
+        ImVec2 window_pos, window_pos_pivot;
+        
+        // On centre horizontalement (x = 0.5) et on ancre en bas (y = 1.0)
+        window_pos.x = work_pos.x + work_size.x * 0.5f;
+        window_pos.y = work_pos.y + work_size.y - 50.0f; // 50px de marge en bas
+        window_pos_pivot.x = 0.5f;
+        window_pos_pivot.y = 1.0f;
+        
+        ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+        ImGui::SetNextWindowSize(ImVec2(400, 100)); // Taille fixe pour être joli
+
+        // -- Contenu de la fenêtre --
+        ImGui::Begin("Input Panel", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove); // NoDecoration retire la barre de titre bleue
+
+        ImGui::Text("Write a sentence:");
+        
+        // Point 2 : Input Text
+        // "##Input" cache le label à gauche, on utilise Text() au dessus à la place
+        // ImGui_InputTextFlags_EnterReturnsTrue permet de valider avec la touche ENTRÉE aussi
+        bool enterPressed = ImGui::InputText("##Input", inputBuffer, IM_ARRAYSIZE(inputBuffer), ImGuiInputTextFlags_EnterReturnsTrue);
+        
+        // Point 3 : Bouton qui remplace le terminal
+        ImGui::SameLine(); // Met le bouton à droite du champ texte
+        if (ImGui::Button("Read") || enterPressed) {
+            // Convertit le char* en string c++
+            std::string sentence0(inputBuffer);
+            sentence = sentence0;
+            sent = true;
+            
+            // Appelle ta fonction de traitement (à adapter selon ton code)
+            // C'est ici que tu remplaces la logique de ask_string()
+            // Exemple : phoneme_parser.parse(sentence); animStartTmps = currentTime;
+            printf("Sentence sent: %s\n", sentence.c_str()); 
+            
+            // Remettre le focus sur l'input après clic (optionnel)
+            ImGui::SetKeyboardFocusHere(-1); 
+        }
+
+        ImGui::End();
+
+        // Rendu ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
     //P4 : fin render loop
         //met les pixels en couleur
         glfwSwapBuffers(window);
         //vérifie si un input a été trigger
         glfwPollEvents();
+        //Nettoyage ImGui
     }
+    //Nettoyage ImGui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
-    printf("fenêtre Phoneme Mouth fermée\n");
+    printf("Phoneme Mask window closed\n");
     glfwTerminate();
     return 0;
 }
+
+
+//322

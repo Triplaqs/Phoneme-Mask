@@ -28,6 +28,12 @@ typedef struct Face {
         etat = 16;
         next_etat = 16;
     }
+    bool fin_phrase(){
+        return (phrase.empty()) && (etat==16) && (next_etat==16);
+    }
+    void reset_phrase(){
+        phrase.clear();
+    }
 } Face;
 
 typedef struct Camera {

@@ -10,6 +10,14 @@
 extern float animStartTmps; //-1 si rien en cours
 extern float animDuree; //durée d'une animation en secondes
 extern float t; //temps pour interpolation
+extern char inputBuffer[256];
+//Is pronounciation over ?
+extern bool endphrase;
+//Is sent button pressed ?
+extern bool sent;
+//sentence that get the user input 
+extern std::string sentence;
+//Translation from string to phonetics
 extern std::unordered_map<std::string, int> dico_asso; //associe les lettres à des numéros de phoneme
 //Fonctions d'animation
 
@@ -48,6 +56,9 @@ void switchedTo(int i);
 
 //Transform the user string input into a list of phonetics attributed to facestruct.phrase
 void inputToPhrase(std::string input);
+
+// Input to Phrase mais pour le ImGui
+void play_sentence_from_gui(std::string text);
 
 //update the phrase vector of facestruct and the current states and nextstate
 void next_mouth(float currentTime);

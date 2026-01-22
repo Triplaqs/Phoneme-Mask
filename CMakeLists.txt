@@ -23,16 +23,31 @@ target_include_directories(glad PUBLIC glad/include)
 
 # ---- Compile your executable
 
+# Add ImGui files
+set(IMGUI_SOURCES
+    Imgui/imgui.cpp
+    Imgui/imgui_draw.cpp
+    Imgui/imgui_widgets.cpp
+    Imgui/imgui_tables.cpp
+    Imgui/imgui_impl_glfw.cpp
+    Imgui/imgui_impl_opengl3.cpp
+)
+
 # Create an executable named "out" that will depend on the source file src/main.cpp
 add_executable(out
     src/vertex.cpp
     src/animation.cpp
     src/main.cpp
+    ${IMGUI_SOURCES}
 )
+
+
+
 
 # ---- Include directories (headers)
 target_include_directories(out PRIVATE
     src
+    Imgui
 )
 
 
