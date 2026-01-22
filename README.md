@@ -19,7 +19,7 @@ Here are examples of sentences red by the mask !
 
 ### Better interaction with the user:
 Using ImGui I added a window to get the user input directly in the window.
-![Textbar](./results/textbar.png)
+![Textbar](./results/textbar.png) \
 Here are examples :
 ![Textbar1](./results/textbar1.gif)
 ![Textbar2](./results/textbar2.gif)
