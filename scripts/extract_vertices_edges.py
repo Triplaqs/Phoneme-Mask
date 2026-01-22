@@ -62,6 +62,12 @@ with open(output_path, "w") as f:
     f.write(f"// Triangle count: {len(mesh.loop_triangles)}\n")
     f.write(f"// donc x3 = {3*len(mesh.loop_triangles)} int\n\n\n")
     f.write("// Liste des phonèmes (en tant qu'états)\n")
-    f.write("const float* phonemes[] = {\n neutre, phoneme_A\n};\n")
+    f.write("const float* phonemes[] = {\n")
+    for key in key_blocks:
+        if(key.name=="smile"):
+            f.write(f"{key.name}\n")
+        else:
+            f.write(f"{key.name}, ")
+    f.write("};\n")
 
 print(f"Export terminé : {output_path}")
