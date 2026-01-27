@@ -240,10 +240,7 @@ int main(int argc, char* argv[]){
     float maxRange = std::max(rangeX, std::max(rangeY, rangeZ));
     float fitScale = (maxRange > 0.0f) ? (2.0f / maxRange) : 1.0f; // mappe la plus grande étendue sur [-1,1]
 
-    GLint loc_centroid = glGetUniformLocation(shaderProgram, "u_centroid");
-    GLint loc_scale = glGetUniformLocation(shaderProgram, "u_scale");
-    glUniform4f(loc_centroid, cx, cy, cz, 1.0f);
-    glUniform1f(loc_scale, fitScale * 0.9f); // petit padding
+   
 
 //render loop (maintient la fenêtre ouverte, une loop = une frame)
     //se divise en 4 parties : nettoyage, input, render puis cloture
