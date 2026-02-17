@@ -248,12 +248,12 @@ int main(int argc, char* argv[]){
         //mesure du temps pour animation
         float currentTime = glfwGetTime();
 
-    //P1 : nettoyage
+//P1 : nettoyage
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Aussi GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT
         
         
-    //P2 : gestion input clavier
+//P2 : gestion input clavier
         bool moveRight = false;
         bool moveLeft = false;
         bool moveUp = false;
@@ -265,7 +265,7 @@ int main(int argc, char* argv[]){
         processInput(window, &moveRight, &moveLeft, &moveUp, &moveDown, &pressR, &pressA, &pressO);
 
 
-    //P3 : gestion du render
+//P3 : gestion du render
 
         //Attention : au choix du programme Shader utilisé
 
