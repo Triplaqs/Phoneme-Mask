@@ -1,5 +1,11 @@
 //OpenGL et rendering
-#include <glad/glad.h>
+//#include <glad/glad.h>
+#ifdef __EMSCRIPTEN__
+    #include <GLES3/gl3.h>
+#else
+    #include <glad/glad.h>
+#endif
+
 #include <GLFW/glfw3.h>
 //Autres fichiers
 #include "vertex.h"
