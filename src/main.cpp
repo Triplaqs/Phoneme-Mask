@@ -348,7 +348,7 @@ int main(int argc, char* argv[]){
             glBufferSubData(GL_ARRAY_BUFFER, 0, face.size() * sizeof(float), face.data());
         }
         
-    // 4. IMGUI (Interface par dessus la 3D)
+    // 3.5. IMGUI (Interface par dessus la 3D)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -386,9 +386,7 @@ int main(int argc, char* argv[]){
             sentence = sentence0;
             sent = true;
             
-            // Appelle ta fonction de traitement (à adapter selon ton code)
-            // C'est ici que tu remplaces la logique de ask_string()
-            // Exemple : phoneme_parser.parse(sentence); animStartTmps = currentTime;
+            // Appelle de la fonction de traitement 
             printf("Sentence sent: %s\n", sentence.c_str()); 
             
             // Remettre le focus sur l'input après clic (optionnel)
