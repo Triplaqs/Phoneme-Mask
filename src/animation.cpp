@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 //Autres fichiers
 #include "vertex.h"
+#include "camera.h"
 #include "animation.h"
 //autre
 #include <iostream>
@@ -125,7 +126,7 @@ void inputToPhrase(std::string input){
 void play_sentence_from_gui(std::string text){
     sent = false;
     inputToPhrase(text);
-    camera.reset(); 
+    //camera.reset(); 
     facestruct.set_neutre();
     
 }

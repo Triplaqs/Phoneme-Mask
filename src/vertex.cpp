@@ -4,8 +4,6 @@ int n = 795;
 
 Face facestruct;
 
-Camera camera; 
-
 
 const float neutre[] = {
     0.045430f, 1.462602f, -0.344850f,

@@ -26,6 +26,7 @@
 #include <iterator>
 //headers
 #include "vertex.h"
+#include "camera.h"
 #include "animation.h"
 
 

@@ -36,6 +36,7 @@ set(IMGUI_SOURCES
 # Create an executable named "out" that will depend on the source file src/main.cpp
 add_executable(out
     src/vertex.cpp
+    src/camera.cpp
     src/animation.cpp
     src/main.cpp
     ${IMGUI_SOURCES}

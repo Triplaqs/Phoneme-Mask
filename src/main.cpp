@@ -23,6 +23,7 @@
 #include <iterator>
 //headers
 #include "vertex.h"
+#include "camera.h"
 #include "animation.h"
 
 //Anciennes variables pour shaders
@@ -88,6 +89,9 @@ int main(int argc, char* argv[]){
     void framebuffer_size_callback(GLFWwindow* window, int width, int height);
     //préciser que l'ont veut qu'il resize régulièrement
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    //Caméra : callback pour la position de la souris
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -240,6 +244,8 @@ int main(int argc, char* argv[]){
     float maxRange = std::max(rangeX, std::max(rangeY, rangeZ));
     float fitScale = (maxRange > 0.0f) ? (2.0f / maxRange) : 1.0f; // mappe la plus grande étendue sur [-1,1]
 
+    camera.reset();
+
    
 
 //render loop (maintient la fenêtre ouverte, une loop = une frame)
@@ -247,6 +253,16 @@ int main(int argc, char* argv[]){
     while(!glfwWindowShouldClose(window)){
         //mesure du temps pour animation
         float currentTime = glfwGetTime();
+
+        //camera :
+       // 1. Calcul de la position de la caméra sur la sphère
+        glm::vec3 pos;
+        pos.x = camera.cameraTarget.x + camera.cameraDistance * cos(glm::radians(camera.pitch)) * cos(glm::radians(camera.yaw));
+        pos.y = camera.cameraTarget.y + camera.cameraDistance * sin(glm::radians(camera.pitch));
+        pos.z = camera.cameraTarget.z + camera.cameraDistance * cos(glm::radians(camera.pitch)) * sin(glm::radians(camera.yaw));
+
+        // 2. Création de la matrice View
+        glm::mat4 view = glm::lookAt(pos, camera.cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f)); //On modifie là où regarde la caméra
 
 //P1 : nettoyage
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -296,7 +312,8 @@ int main(int argc, char* argv[]){
         //model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //axe de profil
         model = glm::rotate(model, glm::radians(-180.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //flip le masque
         model = glm::translate(model, glm::vec3(-cx, -cy, -cz)); // Centre le masque
-        glm::mat4 view = glm::lookAt(glm::vec3(camera.viewx, camera.viewy, camera.viewz), glm::vec3(0, -0.18, 0), glm::vec3(0, 1, 0)); //position de la cam, vers où elle regarde, up vecteur
+        //Utilisation plus tôt, on enlève la définition (glm::mat4 ...)
+        //view = glm::lookAt(glm::vec3(camera.viewx, camera.viewy, camera.viewz), glm::vec3(0, -0.18, 0), glm::vec3(0, 1, 0)); //position de la cam, vers où elle regarde, up vecteur
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         // Envoie au shader

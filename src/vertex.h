@@ -36,20 +36,7 @@ typedef struct Face {
     }
 } Face;
 
-typedef struct Camera {
-    float viewx = 0.0f;
-    float viewy = 0.0f;
-    float viewz = 2.0f;
-    //reset la position de la caméra 
-    void reset() {
-        viewx = 0.0f;
-        viewy = 0.0f;
-        viewz = 2.0f;
-    }
-} Camera;
-
 extern Face facestruct;
-extern Camera camera;   
 
 
 //Structure pour manipuler points
