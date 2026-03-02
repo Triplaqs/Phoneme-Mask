@@ -25,4 +25,8 @@ Here are examples : \
 ![Textbar2](./results/textbar2.gif)
 ![Textbar3](./results/textbar3.gif)
 
+### Moving through space with a mouse-controlled camera:
+Now it is possible to rotate and translate the mask with the mouse.
+![Animation](./results/camera.gif)
+
 
