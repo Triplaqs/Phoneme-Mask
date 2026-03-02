@@ -27,8 +27,7 @@ key_blocks = obj.data.shape_keys.key_blocks
 with open(output_path, "w") as f:
     f.write("#include \"vertex.h\"\n\n")
     f.write("int n = 795;\n\n")
-    f.write("Face facestruct;\n\n")
-    f.write("Camera camera; \n\n\n")
+    f.write("Face facestruct;\n\n\n")
     for key in key_blocks:
         # =====================
         # VERTICES
