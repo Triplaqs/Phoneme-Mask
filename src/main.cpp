@@ -154,7 +154,7 @@ int main(int argc, char* argv[]){
     "vec3 diffuse = diff * lightColor;\n"
     "vec3 result = (ambient + diffuse) * objectColor;\n"
     //essai profondeur
-    "float depth = (FragPos.z + 0.3);\n"
+    "float depth = (-FragPos.z + 0.3);\n"
     "FragColor = vec4(vec3(depth), 1.0);\n"  //ombre
     //"FragColor = vec4(result, 1.0);\n"  //couleur
     "}\0";   
@@ -308,6 +308,7 @@ int main(int argc, char* argv[]){
         //rotation car le masque est vers le haut dans Blender
         //centrer, tourner, scale (ordre)
         model = glm::scale(model, glm::vec3(fitScale*0.5f)); // Utilise fitScale calculé 
+        //le masque était à l'envers dans Blender, on l'a remis à l'endroit depuis
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         //model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //axe de profil
         model = glm::rotate(model, glm::radians(-180.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //flip le masque

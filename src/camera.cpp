@@ -43,7 +43,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
     }
 
     float xoffset = xpos - camera.lastX;
-    float yoffset = camera.lastY - ypos; 
+    float yoffset = ypos - camera.lastY; 
     camera.lastX = xpos;
     camera.lastY = ypos;
 
@@ -66,11 +66,11 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 
         // On déplace la cible du pov de la cam(target)
         camera.cameraTarget += right * (xoffset * 0.005f);
-        camera.cameraTarget -= up * (yoffset * 0.005f);
+        camera.cameraTarget += up * (yoffset * 0.005f);
         
     } else {
         //Déplacement rotatif (tjrs à la Blender)
-        camera.yaw -= xoffset;  
+        camera.yaw += xoffset;  
         camera.pitch += yoffset; 
 
         if (camera.pitch > 89.0f){
