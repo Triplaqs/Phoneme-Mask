@@ -27,6 +27,7 @@ Here are examples : \
 
 ### Moving through space with a mouse-controlled camera:
 Now it is possible to rotate and translate the mask with the mouse.
-![Animation](./results/camera.gif)
+![Camera](./results/camera.gif)
+
 
 
